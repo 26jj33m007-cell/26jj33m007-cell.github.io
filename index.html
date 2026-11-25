@@ -1,87 +1,58 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>편의점 알바 시뮬레이터</title>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>편의점 알바 - 1인칭 시뮬레이터</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#101522;color:#fff;font-family:system-ui,"Noto Sans KR",sans-serif}#game{height:100vh;min-height:520px;position:relative;overflow:hidden;background:#111}canvas{width:100%;height:100%;display:block}#hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:18px}#top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start} .pill{background:#101827c9;border:1px solid #ffffff30;border-radius:13px;padding:10px 14px;backdrop-filter:blur(8px)}#objective{font-weight:700}#hint{position:absolute;left:50%;top:64%;transform:translate(-50%,-50%);background:#101827df;border:1px solid #ffffff44;border-radius:12px;padding:10px 16px;display:none;text-align:center;white-space:nowrap}#bottom{display:flex;justify-content:space-between;align-items:end;gap:12px}#keys{display:flex;gap:7px;flex-wrap:wrap}.key{background:#f4f0ff;color:#25213b;border-radius:7px;padding:6px 10px;font-weight:800;box-shadow:0 3px 0 #a7a0bb}#message{max-width:340px}#cross{position:absolute;left:50%;top:50%;width:8px;height:8px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);opacity:.8;pointer-events:none}#start{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(#101827c9,#101827ed);padding:20px}#card{width:min(540px,100%);background:#fff;color:#242338;border-radius:22px;padding:28px;box-shadow:0 25px 90px #0008}h1{font-size:clamp(27px,5vw,42px);margin:0 0 8px}#card p{color:#625f72;line-height:1.6}#instructions{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:18px 0}.instruction{background:#f2effa;border-radius:10px;padding:10px;font-size:14px}.instruction b{display:inline-grid;place-items:center;background:#fff;border:1px solid #d9d2e9;border-radius:7px;min-width:30px;padding:4px 7px;margin-right:7px}button{border:0;border-radius:12px;padding:13px 20px;font:inherit;font-weight:800;cursor:pointer}#startBtn{background:#6550bd;color:white;width:100%;font-size:18px}#startBtn:hover{background:#5140a1}#toast{position:absolute;left:50%;top:18%;transform:translateX(-50%);background:#152238e8;border:1px solid #ffffff44;border-radius:12px;padding:10px 16px;opacity:0;transition:opacity .2s;pointer-events:none}#toast.show{opacity:1}@media(max-width:600px){#hud{padding:10px}#bottom{align-items:start;flex-direction:column}#instructions{grid-template-columns:1fr 1fr}.pill{font-size:12px;padding:8px}}
-</style></head><body><div id="game"><canvas id="view"></canvas><div id="cross"></div><div id="hud"><div id="top"><div class="pill">🏪 <b>편의점 알바</b><div style="font-size:12px;color:#cbd3e4">1인칭 근무 중</div></div><div class="pill" id="objective">오늘의 업무: 상품 진열대 확인하기</div></div><div id="hint">H 키를 눌러 물건을 집으세요</div><div id="bottom"><div class="pill" id="message">어서 오세요! 근무를 시작해 보세요.</div><div class="pill" id="keys"><span class="key">W</span> 앞 <span class="key">A</span> 왼쪽 <span class="key">S</span> 뒤 <span class="key">D</span> 오른쪽 <span class="key">H</span> 집기</div></div></div><div id="toast"></div>
-<div id="start"><div id="card"><div style="font-size:44px">🏪</div><h1>편의점 알바 시뮬레이터</h1><p>편의점 직원이 되어 매장을 돌아다녀 보세요. 진열대의 상품을 집고 계산대로 가져가는 1인칭 미니 게임입니다.</p><div id="instructions"><div class="instruction"><b>W</b> 앞으로 이동</div><div class="instruction"><b>S</b> 뒤로 이동</div><div class="instruction"><b>A</b> 왼쪽 이동</div><div class="instruction"><b>D</b> 오른쪽 이동</div><div class="instruction"><b>H</b> 물건 집기 / 내려놓기</div><div class="instruction"><b>마우스</b> 시점 둘러보기</div></div><p style="font-size:12px">마우스를 게임 화면 안에서 움직이면 시점이 바뀝니다. 다시 마우스를 클릭하면 포인터 잠금을 사용할 수 있어요.</p><button id="startBtn">▶ 시작하기</button></div></div></div>
+*{box-sizing:border-box}body{margin:0;background:#101522;color:#fff;font-family:system-ui,"Noto Sans KR",sans-serif}#game{height:100vh;min-height:520px;position:relative;overflow:hidden;background:#111}canvas{width:100%;height:100%;display:block}#hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:16px}#top,#bottom{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.pill{background:#101827d9;border:1px solid #ffffff35;border-radius:13px;padding:10px 14px;backdrop-filter:blur(8px);box-shadow:0 5px 20px #0002}#objective{font-weight:700}#keys{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.key{background:#f4f0ff;color:#25213b;border-radius:7px;padding:5px 9px;font-weight:900;box-shadow:0 3px 0 #a7a0bb}#message{max-width:330px}#hint{position:absolute;left:50%;top:66%;transform:translate(-50%,-50%);background:#101827ed;border:1px solid #ffffff55;border-radius:12px;padding:10px 16px;display:none;text-align:center;white-space:nowrap;font-weight:700}#cross{position:absolute;left:50%;top:50%;width:9px;height:9px;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);opacity:.85;pointer-events:none}#start{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(#101827bb,#101827f2);padding:18px}#card{width:min(620px,100%);background:#fff;color:#242338;border-radius:22px;padding:26px;box-shadow:0 25px 90px #0009}h1{font-size:clamp(26px,5vw,40px);margin:0 0 8px}#card p{color:#625f72;line-height:1.6}#instructions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0}.instruction{background:#f2effa;border-radius:10px;padding:10px;font-size:14px}.instruction b{display:inline-grid;place-items:center;background:#fff;border:1px solid #d9d2e9;border-radius:7px;min-width:30px;padding:4px 7px;margin-right:7px}button{border:0;border-radius:12px;padding:13px 20px;font:inherit;font-weight:800;cursor:pointer}#startBtn{background:#6550bd;color:white;width:100%;font-size:18px}#toast{position:absolute;left:50%;top:18%;transform:translateX(-50%);background:#152238ed;border:1px solid #ffffff44;border-radius:12px;padding:10px 16px;opacity:0;transition:opacity .2s;pointer-events:none;text-align:center}#toast.show{opacity:1}.small{font-size:12px;color:#cbd3e4}@media(max-width:650px){#hud{padding:8px}#top,#bottom{flex-wrap:wrap}.pill{font-size:12px;padding:8px}#instructions{grid-template-columns:1fr 1fr}#message{max-width:100%}}
+</style></head><body><div id="game"><canvas id="view"></canvas><div id="cross"></div><div id="hud"><div id="top"><div class="pill">🏪 <b>편의점 알바</b><div class="small">내 시점 · 근무 중</div></div><div class="pill" id="objective">오늘의 업무: 매장 둘러보기</div></div><div id="hint">H 키를 눌러 행동하기</div><div id="bottom"><div class="pill" id="message">어서 오세요! 시작 버튼을 눌러 출근하세요.</div><div class="pill" id="keys"><span class="key">W</span> 앞으로 <span class="key">A</span> 왼쪽 <span class="key">S</span> 뒤로 <span class="key">D</span> 오른쪽 <span class="key">H</span> 집기/청소</div></div></div><div id="toast"></div>
+<div id="start"><div id="card"><div style="font-size:42px">🏪 🧹</div><h1>편의점 알바 시뮬레이터</h1><p>내가 편의점 직원이 되어 매장을 직접 돌아다니는 1인칭 게임이에요. 진열대와 냉장고, 계산대, 자동문, 손님이 있는 편의점에서 상품 정리와 청소를 해보세요.</p><div id="instructions"><div class="instruction"><b>W</b> 앞으로 이동</div><div class="instruction"><b>S</b> 뒤로 이동</div><div class="instruction"><b>A</b> 왼쪽으로 이동</div><div class="instruction"><b>D</b> 오른쪽으로 이동</div><div class="instruction"><b>H</b> 물건 집기 / 내려놓기 / 청소</div><div class="instruction"><b>마우스</b> 좌우로 둘러보기</div></div><p style="font-size:12px">상품이나 쓰레기 가까이 가서 화면 중앙을 대상에 맞춘 뒤 H를 누르세요. 상품은 계산대로, 쓰레기는 청소 도구로 정리할 수 있어요. 게임 화면을 클릭하면 마우스로 시점을 돌릴 수 있습니다.</p><button id="startBtn">▶ 시작하기</button></div></div></div>
 <script>
-(()=>{
-const canvas=document.getElementById('view'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
-let W=innerWidth,H=innerHeight,playing=false,yaw=0,px=5.5,py=9.2,held=null,completed=0,toastTimer;
-const map=[
-"############",
-"#..........#",
-"#..##......#",
-"#..##......#",
-"#..........#",
-"#....##....#",
-"#....##....#",
-"#..........#",
-"#..........#",
-"#..........#",
-"#..........#",
-"############"
-];
-const products=[
-{x:2.5,y:2.6,name:"과자",color:"#f5b83d",kind:"snack",done:false},
-{x:8.7,y:2.6,name:"음료수",color:"#55b9e9",kind:"drink",done:false},
-{x:2.5,y:7.3,name:"라면",color:"#f16c55",kind:"ramen",done:false},
-{x:8.7,y:7.3,name:"삼각김밥",color:"#7fca85",kind:"food",done:false}
-];
-const counter={x:5.5,y:1.7};
+(()=>{const canvas=document.getElementById('view'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
+let W=0,H=0,playing=false,yaw=-Math.PI/2,px=5.5,py=9.4,held=null,cleaning=false,completed=0,cleaned=0,toastTimer,last=0;
+const map=["############","#..........#","#..##......#","#..##......#","#..........#","#....##....#","#....##....#","#..........#","#..........#","#..........#","#..........#","####D#######"];
+const products=[{x:2.45,y:2.65,name:"과자",color:"#f4b83f",done:false},{x:8.65,y:2.65,name:"음료수",color:"#4eb9e8",done:false},{x:2.45,y:7.25,name:"라면",color:"#ed6a50",done:false},{x:8.65,y:7.25,name:"삼각김밥",color:"#78c985",done:false}];
+const customers=[{x:5.4,y:4.1,phase:0,shirt:"#d87961"},{x:9.5,y:5.2,phase:1.8,shirt:"#668cc4"},{x:3.7,y:8.0,phase:3.1,shirt:"#b18acb"}];
+const dirt=[{x:4.7,y:6.6,done:false},{x:7.4,y:8.3,done:false},{x:9.1,y:3.9,done:false}];
+const counter={x:5.5,y:1.65};
 const keys={};
-function resize(){W=canvas.width=innerWidth*devicePixelRatio;H=canvas.height=innerHeight*devicePixelRatio;ctx.setTransform(1,0,0,1,0,0)}
-addEventListener('resize',resize);resize();
-function wall(x,y){const ix=Math.floor(x),iy=Math.floor(y);return !map[iy]||map[iy][ix]!==' .'&&map[iy][ix]!==' '&&map[iy][ix]!==' .'&&map[iy][ix]!=='.'}
-function blocked(x,y){return !map[Math.floor(y)]||map[Math.floor(y)][Math.floor(x)]!==' .'.trim()}
-function notify(t){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),1900)}
-function updateObjective(){$('objective').textContent=held?'운반 중: '+held.name+' → 계산대':completed>=products.length?'오늘의 업무: 상품 진열 완료!':'오늘의 업무: 상품 '+(completed+1)+'개를 집어 계산대로 가져가기'}
-function interact(){
- if(!playing)return;
- if(held){if(Math.hypot(px-counter.x,py-counter.y)<1.55){notify('✅ '+held.name+' 진열/정리 완료!');held.done=true;held=null;completed++;updateObjective();if(completed===products.length)notify('🎉 오늘의 상품 정리를 모두 마쳤어요!')}else notify('계산대 근처로 가서 H를 누르세요.');return}
- let target=null,dist=1.5;
- for(const p of products){if(!p.done){const d=Math.hypot(px-p.x,py-p.y);if(d<dist){dist=d;target=p}}}
- if(target){held=target;notify(target.name+'을(를) 들었어요. 계산대로 가져가세요!');updateObjective()}else notify('집을 상품 가까이 다가가세요.');
+function resize(){W=canvas.width=Math.floor(innerWidth*devicePixelRatio);H=canvas.height=Math.floor(innerHeight*devicePixelRatio)}addEventListener('resize',resize);resize();
+function blocked(x,y){let row=map[Math.floor(y)],cell=row?.[Math.floor(x)];if(!cell||cell==='#')return true;if(cell==='D')return false;return false}
+function notify(t){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),1900);$('message').textContent=t}
+function updateObjective(){$('objective').textContent=held?'운반 중: '+held.name+' → 계산대':cleaning?'청소 도구를 들고 있어요':completed===4&&cleaned===3?'오늘의 업무: 모두 완료!':'업무: 상품 '+completed+'/4 · 청소 '+cleaned+'/3'}
+function ray(angle){let d=0,x=px,y=py,dx=Math.cos(angle),dy=Math.sin(angle);while(d<18){d+=.035;x=px+dx*d;y=py+dy*d;if(blocked(x,y))break}return{d,x,y}}
+function castSprite(s,fov,depth){let dx=s.x-px,dy=s.y-py,dist=Math.hypot(dx,dy),a=Math.atan2(dy,dx)-yaw;while(a>Math.PI)a-=Math.PI*2;while(a< -Math.PI)a+=Math.PI*2;if(Math.abs(a)>fov*.8||dist<.15)return;let sx=W/2+Math.tan(a)/Math.tan(fov/2)*(W/2),size=Math.min(H*.85,H/(dist)*.48),idx=Math.floor(sx/2);if(idx>=0&&idx<depth.length&&dist>depth[idx]+.12)return;return{sx,size,dist,sy:H*.49+size*.12}}
+function drawStore(){const horizon=H*.49;let sky=ctx.createLinearGradient(0,0,0,horizon);sky.addColorStop(0,'#b7d7e8');sky.addColorStop(1,'#f2e7d5');ctx.fillStyle=sky;ctx.fillRect(0,0,W,horizon);let floor=ctx.createLinearGradient(0,horizon,0,H);floor.addColorStop(0,'#c8bba5');floor.addColorStop(1,'#74695d');ctx.fillStyle=floor;ctx.fillRect(0,horizon,W,H-horizon);
+ctx.strokeStyle='#ffffff30';ctx.lineWidth=devicePixelRatio;for(let i=1;i<15;i++){let y=horizon+(H-horizon)*i*i/225;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+const fov=Math.PI/3,depth=new Float32Array(Math.ceil(W/2));
+for(let x=0;x<W;x+=2){let cam=(2*x/W-1)*Math.tan(fov/2),a=yaw+Math.atan(cam),hit=ray(a),dist=hit.d*Math.cos(a-yaw),idx=Math.floor(x/2);depth[idx]=dist;let wh=Math.min(H*1.8,H/(dist+.001)*.88),top=horizon-wh/2,shade=Math.max(.38,1-dist/15);let cell=map[Math.floor(hit.y)]?.[Math.floor(hit.x)];let col=cell==='D'?'#397c83':'#c7cbd0';let r=parseInt(col.slice(1,3),16)*shade,g=parseInt(col.slice(3,5),16)*shade,b=parseInt(col.slice(5,7),16)*shade;ctx.fillStyle='rgb('+r+','+g+','+b+')';ctx.fillRect(x,top,3,wh);
+// wall trim, store details
+ctx.fillStyle='rgba(58,68,75,.45)';ctx.fillRect(x,top+wh*.08,3,wh*.025);ctx.fillStyle='rgba(255,255,255,.25)';ctx.fillRect(x,top+wh*.13,3,wh*.015);
+if(cell==='#'){ctx.fillStyle='rgba(70,55,42,.5)';ctx.fillRect(x,top+wh*.43,3,wh*.035);ctx.fillRect(x,top+wh*.76,3,wh*.035);ctx.fillStyle='rgba(255,255,255,.22)';ctx.fillRect(x,top+wh*.2,3,wh*.025)}
+if(cell==='D'){ctx.fillStyle='#b7e4df';ctx.fillRect(x,top+wh*.16,3,wh*.68);ctx.fillStyle='#e7f7f3';ctx.fillRect(x,top+wh*.2,3,wh*.6);ctx.fillStyle='#31676b';ctx.fillRect(x,top+wh*.5,3,wh*.025)}
 }
-function cast(angle){let d=0,hitX=px,hitY=py;const dx=Math.cos(angle),dy=Math.sin(angle);while(d<18){d+=.035;hitX=px+dx*d;hitY=py+dy*d;if(blocked(hitX,hitY))break}return {d,hitX,hitY,side:Math.abs((hitX-Math.floor(hitX))-.5)>Math.abs((hitY-Math.floor(hitY))-.5)?0:1}}
-function render(){
- if(!playing){requestAnimationFrame(render);return}
- const horizon=H*.49;
- const sky=ctx.createLinearGradient(0,0,0,horizon);sky.addColorStop(0,'#b8d9ed');sky.addColorStop(1,'#f2e8d4');ctx.fillStyle=sky;ctx.fillRect(0,0,W,horizon);
- const floor=ctx.createLinearGradient(0,horizon,0,H);floor.addColorStop(0,'#b9a98e');floor.addColorStop(1,'#574c46');ctx.fillStyle=floor;ctx.fillRect(0,horizon,W,H-horizon);
- // floor perspective tiles
- ctx.strokeStyle='#ffffff25';ctx.lineWidth=devicePixelRatio;for(let i=1;i<13;i++){let y=horizon+(H-horizon)*i*i/144;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
- const depth=new Float32Array(Math.ceil(W/2));const fov=Math.PI/3;
- for(let x=0;x<W;x+=2){const camera=(2*x/W-1)*Math.tan(fov/2);const angle=yaw+Math.atan(camera);const hit=cast(angle);const corrected=hit.d*Math.cos(angle-yaw);depth[Math.floor(x/2)]=corrected;const wallH=Math.min(H*1.8,H/(corrected+.001)*.82);const top=horizon-wallH/2;const shade=Math.max(.35,1-corrected/13)*(hit.side?.83:1);ctx.fillStyle=hit.hitY<0?'#aaa':'rgb('+Math.floor(142*shade)+','+Math.floor(156*shade)+','+Math.floor(166*shade)+')';ctx.fillRect(x,top,3,wallH);
- // shelf stripes
- const cellX=Math.floor(hit.hitX),cellY=Math.floor(hit.hitY);if(map[cellY]&&map[cellY][cellX]==='#'){ctx.fillStyle='rgba(55,42,35,.42)';ctx.fillRect(x,top+wallH*.28,3,wallH*.035);ctx.fillRect(x,top+wallH*.62,3,wallH*.035);ctx.fillStyle='rgba(245,235,216,.22)';ctx.fillRect(x,top+wallH*.12,3,wallH*.025)}
- }
- // sprites sorted far to near
- const sprites=products.filter(p=>!p.done).map(p=>({...p,dist:Math.hypot(p.x-px,p.y-py)})).concat([{...counter,name:'계산대',color:'#8c6b4c',dist:Math.hypot(counter.x-px,counter.y-py),isCounter:true}]).sort((a,b)=>b.dist-a.dist);
- for(const s of sprites){let dx=s.x-px,dy=s.y-py;let angle=Math.atan2(dy,dx)-yaw;while(angle>Math.PI)angle-=2*Math.PI;while(angle< -Math.PI)angle+=2*Math.PI;if(Math.abs(angle)>fov*.72||s.dist<.2)continue;const sx=W/2+Math.tan(angle)/(Math.tan(fov/2))*(W/2);const size=Math.min(H*.75,H/(s.dist)*(.42));const idx=Math.floor(sx/2);if(idx>=0&&idx<depth.length&&s.dist>depth[idx]+.18)continue;const sy=horizon+size*.16;
- if(s.isCounter){ctx.fillStyle='#674b37';ctx.fillRect(sx-size*.68,sy-size*.15,size*1.36,size*.42);ctx.fillStyle='#b98a59';ctx.fillRect(sx-size*.7,sy-size*.2,size*1.4,size*.09);ctx.fillStyle='#293c4b';ctx.fillRect(sx-size*.2,sy-size*.52,size*.4,size*.3);ctx.fillStyle='#fff';ctx.font='bold '+Math.max(10,size*.12)+'px sans-serif';ctx.textAlign='center';ctx.fillText('계산대',sx,sy+size*.4)}
- else{ctx.fillStyle='#28202a';ctx.fillRect(sx-size*.23,sy-size*.5,size*.46,size*.8);ctx.fillStyle=s.color;ctx.fillRect(sx-size*.2,sy-size*.47,size*.4,size*.72);ctx.fillStyle='#ffffffaa';ctx.fillRect(sx-size*.13,sy-size*.38,size*.07,size*.35);ctx.fillStyle='#2d2530';ctx.font='bold '+Math.max(10,size*.15)+'px sans-serif';ctx.textAlign='center';ctx.fillText(s.name,sx,sy+size*.43)}
- }
- // hands / held item view
- ctx.fillStyle='#e8b58f';ctx.beginPath();ctx.ellipse(W*.79,H*.91,W*.09,H*.055,-.25,0,Math.PI*2);ctx.fill();ctx.fillStyle='#d9a17e';ctx.beginPath();ctx.ellipse(W*.87,H*.88,W*.045,H*.07,-.35,0,Math.PI*2);ctx.fill();
- if(held){ctx.fillStyle=held.color;ctx.fillRect(W*.44,H*.73,W*.12,H*.16);ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeRect(W*.44,H*.73,W*.12,H*.16);ctx.fillStyle='#fff';ctx.font='bold '+(16*devicePixelRatio)+'px sans-serif';ctx.textAlign='center';ctx.fillText(held.name,W*.5,H*.92)}
- // center marker / proximity
- const near=held?Math.hypot(px-counter.x,py-counter.y)<1.55:products.some(p=>!p.done&&Math.hypot(px-p.x,py-p.y)<1.5);
- $('hint').style.display=near?'block':'none';$('hint').textContent=held?'H 키: 계산대에 내려놓기':'H 키: 상품 집기';
- requestAnimationFrame(render)
+// sprites
+let sprites=[];
+products.filter(p=>!p.done).forEach(p=>sprites.push({...p,type:'product'}));
+customers.forEach((c,i)=>sprites.push({...c,type:'customer',name:'손님',x:c.x+Math.sin(performance.now()/2200+c.phase)*.18,y:c.y+Math.cos(performance.now()/2600+c.phase)*.15}));
+dirt.filter(d=>!d.done).forEach(d=>sprites.push({...d,type:'dirt',name:'쓰레기'}));
+sprites.push({...counter,type:'counter',name:'계산대'});
+sprites.sort((a,b)=>Math.hypot(b.x-px,b.y-py)-Math.hypot(a.x-px,a.y-py));
+for(const s of sprites){let p=castSprite(s,fov,depth);if(!p)continue;let{x,size,sy}=p;
+if(s.type==='counter'){ctx.fillStyle='#594333';ctx.fillRect(x-size*.72,sy-size*.1,size*1.44,size*.43);ctx.fillStyle='#b78a5d';ctx.fillRect(x-size*.76,sy-size*.2,size*1.52,size*.12);ctx.fillStyle='#253746';ctx.fillRect(x-size*.22,sy-size*.56,size*.44,size*.34);ctx.fillStyle='#f7f0dc';ctx.font='bold '+Math.max(11,size*.12)+'px sans-serif';ctx.textAlign='center';ctx.fillText('계산대',x,sy+size*.43)}
+if(s.type==='product'){ctx.fillStyle='#332a2c';ctx.fillRect(x-size*.22,sy-size*.48,size*.44,size*.78);ctx.fillStyle=s.color;ctx.fillRect(x-size*.19,sy-size*.45,size*.38,size*.7);ctx.fillStyle='#fff9';ctx.fillRect(x-size*.12,sy-size*.34,size*.24,size*.08);ctx.fillStyle='#2b2530';ctx.font='bold '+Math.max(10,size*.13)+'px sans-serif';ctx.fillText(s.name,x,sy+size*.42)}
+if(s.type==='customer'){ctx.fillStyle='#34313a';ctx.fillRect(x-size*.25,sy-size*.1,size*.5,size*.48);ctx.fillStyle=s.shirt;ctx.fillRect(x-size*.28,sy-size*.12,size*.56,size*.35);ctx.beginPath();ctx.arc(x,sy-size*.3,size*.19,0,Math.PI*2);ctx.fillStyle='#f0c5a4';ctx.fill();ctx.fillStyle='#44352f';ctx.beginPath();ctx.arc(x,sy-size*.35,size*.2,Math.PI,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font='bold '+Math.max(10,size*.1)+'px sans-serif';ctx.fillText('손님',x,sy+size*.46)}
+if(s.type==='dirt'){ctx.fillStyle='#423a32';ctx.beginPath();ctx.ellipse(x,sy+size*.28,size*.23,size*.1,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#d9c48a';ctx.fillRect(x-size*.1,sy+size*.2,size*.2,size*.12);ctx.fillStyle='#fff';ctx.font='bold '+Math.max(10,size*.11)+'px sans-serif';ctx.fillText('청소',x,sy+size*.48)}
 }
-function move(dt){let speed=2.35*dt,fx=Math.cos(yaw),fy=Math.sin(yaw),rx=-Math.sin(yaw),ry=Math.cos(yaw),mx=0,my=0;
- if(keys.KeyW){mx+=fx;my+=fy}if(keys.KeyS){mx-=fx;my-=fy}if(keys.KeyD){mx+=rx;my+=ry}if(keys.KeyA){mx-=rx;my-=ry}
- const n=Math.hypot(mx,my)||1;mx=mx/n*speed;my=my/n*speed;
- if(!blocked(px+mx+.18*Math.sign(mx),py))px+=mx;if(!blocked(px,py+my+.18*Math.sign(my)))py+=my;
 }
-let last=0;function loop(t){const dt=Math.min((t-last)/1000,.04);last=t;if(playing)move(dt);requestAnimationFrame(loop)}
-document.addEventListener('keydown',e=>{if(['KeyW','KeyA','KeyS','KeyD','Space'].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==='KeyH'&&!e.repeat)interact()});
-document.addEventListener('keyup',e=>keys[e.code]=false);
+// viewmodel arms and carried tool
+function drawHands(){ctx.fillStyle='#dba780';ctx.beginPath();ctx.ellipse(W*.83,H*.91,W*.095,H*.06,-.25,0,Math.PI*2);ctx.fill();ctx.fillStyle='#c98e6d';ctx.beginPath();ctx.ellipse(W*.9,H*.88,W*.045,H*.075,-.35,0,Math.PI*2);ctx.fill();if(held||cleaning){ctx.fillStyle=held?held.color:'#b8a46b';ctx.fillRect(W*.45,H*.73,W*.12,H*.16);ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeRect(W*.45,H*.73,W*.12,H*.16);ctx.fillStyle='#fff';ctx.font='bold '+(16*devicePixelRatio)+'px sans-serif';ctx.textAlign='center';ctx.fillText(held?held.name:'🧹',W*.51,H*.92)}}
+function nearestTarget(){let best=null,bd=1.8;const forward={x:Math.cos(yaw),y:Math.sin(yaw)};for(const p of products.filter(p=>!p.done)){let dx=p.x-px,dy=p.y-py,d=Math.hypot(dx,dy),dot=(dx*forward.x+dy*forward.y)/d;if(d<bd&&dot>.35){bd=d;best={...p,kind:'product',ref:p}}}for(const d of dirt.filter(d=>!d.done)){let dx=d.x-px,dy=d.y-py,dist=Math.hypot(dx,dy),dot=(dx*forward.x+dy*forward.y)/dist;if(dist<bd&&dot>.35){bd=dist;best={...d,kind:'dirt',ref:d}}}if(held){let d=Math.hypot(px-counter.x,py-counter.y);if(d<2.0)best={kind:'counter',name:'계산대'}}return best}
+function action(){if(!playing)return;let t=nearestTarget();if(held){if(t?.kind==='counter'){held.done=true;held=null;completed++;notify('상품을 계산대에 정리했어요!');updateObjective()}else notify('계산대 가까이 가서 H를 누르세요.');return}if(cleaning){if(t?.kind==='dirt'){t.ref.done=true;cleaned++;notify('✨ 바닥을 깨끗하게 청소했어요!');updateObjective()}else if(t?.kind==='counter'){cleaning=false;notify('청소 도구를 제자리에 두었어요.')}else notify('쓰레기 가까이 가서 H를 누르세요.');return}if(t?.kind==='product'){held=t.ref;notify(t.name+'을(를) 집었어요. 계산대로 가져가세요.');updateObjective()}else if(t?.kind==='dirt'){cleaning=true;notify('청소 도구를 들었어요. 쓰레기 앞에서 H를 누르세요.');updateObjective()}else notify('상품이나 쓰레기 가까이 다가가 화면 중앙에 맞춰 보세요.')}
+function render(){if(!playing){requestAnimationFrame(render);return}drawStore();drawHands();let t=nearestTarget();$('hint').style.display=t?'block':'none';$('hint').textContent=held?(t?.kind==='counter'?'H 키: 상품 내려놓기':'계산대 쪽으로 이동하세요'):cleaning?(t?.kind==='dirt'?'H 키: 바닥 청소하기':'쓰레기 쪽으로 이동하세요'):t?.kind==='product'?'H 키: '+t.name+' 집기':t?.kind==='dirt'?'H 키: 청소 도구 들기':'';requestAnimationFrame(render)}
+function move(dt){let speed=(held?.75:2.45)*dt,fx=Math.cos(yaw),fy=Math.sin(yaw),rx=-Math.sin(yaw),ry=Math.cos(yaw),mx=0,my=0;if(keys.KeyW){mx+=fx;my+=fy}if(keys.KeyS){mx-=fx;my-=fy}if(keys.KeyD){mx+=rx;my+=ry}if(keys.KeyA){mx-=rx;my-=ry}let n=Math.hypot(mx,my)||1;mx=mx/n*speed;my=my/n*speed;let nx=px+mx,ny=py+my;if(!blocked(nx+.2*Math.sign(mx),py))px=nx;if(!blocked(px,ny+.2*Math.sign(my)))py=ny;px=Math.max(.35,Math.min(10.65,px));py=Math.max(.35,Math.min(10.65,py))}
+function loop(t){let dt=Math.min((t-last)/1000,.04);last=t;if(playing)move(dt);requestAnimationFrame(loop)}
+document.addEventListener('keydown',e=>{if(['KeyW','KeyA','KeyS','KeyD','Space'].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==='KeyH'&&!e.repeat)action()});document.addEventListener('keyup',e=>keys[e.code]=false);
 document.addEventListener('mousemove',e=>{if(playing&&document.pointerLockElement===canvas)yaw+=e.movementX*.0025});
-canvas.addEventListener('click',()=>{if(playing&&canvas.requestPointerLock)canvas.requestPointerLock()});
-$('startBtn').onclick=()=>{$('start').style.display='none';playing=true;notify('근무 시작! 진열대 상품을 확인해 보세요.');canvas.requestPointerLock?.();};
-document.addEventListener('pointerlockchange',()=>{});
+canvas.addEventListener('click',()=>{if(playing)canvas.requestPointerLock?.()});
+$('startBtn').onclick=()=>{$('start').style.display='none';playing=true;notify('출근 완료! 매장을 둘러보고 업무를 시작하세요.');canvas.requestPointerLock?.()};
+document.addEventListener('visibilitychange',()=>{if(document.hidden)Object.keys(keys).forEach(k=>keys[k]=false)});
 requestAnimationFrame(render);requestAnimationFrame(loop);
-})();
-</script></body></html>
+})();</script></body></html>
