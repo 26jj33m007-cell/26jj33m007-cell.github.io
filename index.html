@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>나만의 SD 피규어 스튜디오</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;color:#26243a;background:#f4f1ff}
+*{box-sizing:border-box}body{margin:0;padding:22px}header{max-width:1120px;margin:0 auto 18px}h1{margin:0 0 6px;font-size:clamp(24px,4vw,34px)}p{margin:0;color:#66617a}
+main{max-width:1120px;margin:auto;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:18px}
+.panel{background:white;border:1px solid #e6e0f4;border-radius:18px;padding:16px;box-shadow:0 8px 24px #30205b0b}
+.stage{position:relative;min-height:540px;display:flex;align-items:center;justify-content:center;background:linear-gradient(45deg,#faf9ff 25%,transparent 25%),linear-gradient(-45deg,#faf9ff 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#faf9ff 75%),linear-gradient(-45deg,transparent 75%,#faf9ff 75%);background-size:24px 24px;background-position:0 0,0 12px,12px -12px,-12px 0}
+canvas{width:min(100%,560px);height:auto;touch-action:none;cursor:crosshair}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+button,select,input{font:inherit}button{border:0;border-radius:10px;padding:9px 12px;background:#eee9ff;color:#44327c;cursor:pointer;font-weight:650}button.primary{background:#6550bd;color:white}button.active{background:#d8ceff;outline:2px solid #8069d4}
+button:hover{filter:brightness(.97)}.group{border-top:1px solid #eeeaf5;padding:13px 0}.group:first-of-type{border-top:0;padding-top:0}
+h2{font-size:16px;margin:0 0 10px}.control{display:grid;grid-template-columns:85px 1fr 38px;gap:8px;align-items:center;margin:9px 0;font-size:13px}
+input[type=range]{width:100%;accent-color:#705bc5}input[type=color]{width:100%;height:34px;border:0;background:none}select{width:100%;padding:8px;border:1px solid #ddd6ed;border-radius:9px;background:white}
+.palette{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.palette label{font-size:12px;color:#5e5870}
+.hint{font-size:12px;color:#77718a;line-height:1.55;margin-top:10px}
+@media(max-width:780px){body{padding:12px}main{grid-template-columns:1fr}.stage{min-height:380px}}
+</style>
+</head>
+<body>
+<header><h1>🎨 나만의 SD 피규어 스튜디오</h1><p>귀여운 SD 사람 모형의 포즈를 바꾸고, 직접 그림을 더해 나만의 캐릭터를 만들어 보세요.</p></header>
+<main>
+<section class="panel">
+ <div class="tools">
+  <button class="active" data-tool="pose">🦴 포즈 조절</button><button data-tool="draw">✏️ 자유롭게 그리기</button><button data-tool="erase">지우개</button>
+  <button id="undo">↶ 되돌리기</button><button id="clear">그림 지우기</button><button class="primary" id="save">PNG 저장</button>
+ </div>
+ <div class="stage"><canvas id="canvas" width="700" height="760" aria-label="SD 피규어 작업 캔버스"></canvas></div>
+ <div class="hint">포즈 조절: 손·팔·발의 관절 점을 드래그하세요. 그리기/지우개: 캔버스 위에서 마우스나 손가락으로 움직이세요. 완성한 그림은 PNG로 저장할 수 있어요.</div>
+</section>
+<aside class="panel">
+ <div class="group"><h2>포즈 프리셋</h2><div class="tools">
+  <button data-pose="stand">기본 자세</button><button data-pose="wave">손 흔들기</button><button data-pose="run">달리기</button><button data-pose="sit">앉기</button>
+ </div></div>
+ <div class="group"><h2>관절 조절</h2>
+  <div class="control"><label for="armL">왼팔</label><input id="armL" type="range" min="-150" max="150" value="35"><output>35°</output></div>
+  <div class="control"><label for="armR">오른팔</label><input id="armR" type="range" min="-150" max="150" value="-35"><output>-35°</output></div>
+  <div class="control"><label for="legL">왼다리</label><input id="legL" type="range" min="-90" max="90" value="-8"><output>-8°</output></div>
+  <div class="control"><label for="legR">오른다리</label><input id="legR" type="range" min="-90" max="90" value="8"><output>8°</output></div>
+  <div class="control"><label for="head">고개 기울기</label><input id="head" type="range" min="-35" max="35" value="0"><output>0°</output></div>
+ </div>
+ <div class="group"><h2>캐릭터 꾸미기</h2><div class="palette">
+  <label>머리색<input id="hair" type="color" value="#49365f"></label>
+  <label>옷 색<input id="shirt" type="color" value="#9b83e8"></label>
+  <label>바지 색<input id="pants" type="color" value="#526b9d"></label>
+  <label>피부색<input id="skin" type="color" value="#f2c6a5"></label>
+ </div>
+ <div class="control"><label for="hairStyle">머리 모양</label><select id="hairStyle"><option value="short">짧은 머리</option><option value="long">긴 머리</option><option value="bob">단발</option></select><span></span></div>
+ <div class="control"><label for="brush">펜 굵기</label><input id="brush" type="range" min="2" max="24" value="6"><output>6</output></div>
+ </div>
+ <div class="group"><h2>작업하기</h2><div class="tools"><button id="reset">처음부터</button><button id="white">배경 흰색</button><button id="transparent">체크 배경</button></div><p class="hint">이 프로그램은 브라우저에서 바로 실행되며, 별도 설치나 회원가입이 필요하지 않습니다.</p></div>
+</aside>
+</main>
+<script>
+const c=document.getElementById('canvas'),ctx=c.getContext('2d');
+const $=id=>document.getElementById(id);
+const state={tool:'pose',armL:35,armR:-35,legL:-8,legR:8,head:0,hair:'#49365f',shirt:'#9b83e8',pants:'#526b9d',skin:'#f2c6a5',hairStyle:'short',brush:6,bg:'grid'};
+let strokes=[],current=null,drag=null,history=[];
+const rad=d=>d*Math.PI/180, point=(x,y,a,len)=>({x:x+Math.cos(rad(a))*len,y:y+Math.sin(rad(a))*len});
+function snapshot(){history.push(JSON.stringify(strokes));if(history.length>30)history.shift()}
+function line(a,b,w,color){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.lineWidth=w;ctx.lineCap='round';ctx.strokeStyle=color;ctx.stroke()}
+function circle(p,r,color){ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#493c52';ctx.lineWidth=3;ctx.stroke()}
+function limb(a,b,color,w=28){line(a,b,w,'#493c52');line(a,b,w-6,color);circle(b,w*.25,'#493c52');circle(b,w*.20,state.skin)}
+function drawFigure(){
+ ctx.clearRect(0,0,700,760);
+ if(state.bg==='white'){ctx.fillStyle='#fff';ctx.fillRect(0,0,700,760)}
+ else {ctx.fillStyle='#fff';ctx.fillRect(0,0,700,760);ctx.strokeStyle='#f0edf7';ctx.lineWidth=1;for(let x=0;x<700;x+=28)for(let y=0;y<760;y+=28)ctx.strokeRect(x,y,28,28)}
+ const hip={x:350,y:470},shoulder={x:350,y:310};
+ // legs
+ const knees=[point(hip.x-28,hip.y,90+state.legL,112),point(hip.x+28,hip.y,90+state.legR,112)];
+ const feet=[point(knees[0].x,knees[0].y,90+state.legL*.65,94),point(knees[1].x,knees[1].y,90+state.legR*.65,94)];
+ limb(hip,knees[0],state.pants,34);limb(knees[0],feet[0],state.pants,30);
+ limb(hip,knees[1],state.pants,34);limb(knees[1],feet[1],state.pants,30);
+ line({x:feet[0].x-20,y:feet[0].y+4},{x:feet[0].x+22,y:feet[0].y+4},17,'#493c52');
+ line({x:feet[1].x-20,y:feet[1].y+4},{x:feet[1].x+22,y:feet[1].y+4},17,'#493c52');
+ // torso
+ ctx.beginPath();ctx.moveTo(shoulder.x-48,shoulder.y);ctx.quadraticCurveTo(350,285,398,310);ctx.lineTo(390,455);ctx.quadraticCurveTo(350,480,310,455);ctx.lineTo(302,310);ctx.closePath();ctx.fillStyle=state.shirt;ctx.fill();ctx.lineWidth=4;ctx.strokeStyle='#493c52';ctx.stroke();
+ // arms
+ const elbows=[point(shoulder.x-48,shoulder.y,state.armL,72),point(shoulder.x+48,shoulder.y,180+state.armR,72)];
+ const hands=[point(elbows[0].x,elbows[0].y,state.armL+12,66),point(elbows[1].x,elbows[1].y,180+state.armR-12,66)];
+ limb({x:shoulder.x-42,y:shoulder.y+10},elbows[0],state.shirt,27);limb(elbows[0],hands[0],state.skin,23);
+ limb({x:shoulder.x+42,y:shoulder.y+10},elbows[1],state.shirt,27);limb(elbows[1],hands[1],state.skin,23);
+ // neck/head
+ ctx.fillStyle=state.skin;ctx.fillRect(331,260,38,48);
+ ctx.save();ctx.translate(350,210);ctx.rotate(rad(state.head));
+ ctx.beginPath();ctx.ellipse(0,0,76,82,0,0,Math.PI*2);ctx.fillStyle=state.skin;ctx.fill();ctx.lineWidth=4;ctx.strokeStyle='#493c52';ctx.stroke();
+ // hair
+ ctx.beginPath();ctx.arc(0,-14,78,Math.PI,Math.PI*2);ctx.quadraticCurveTo(70,-65,67,10);if(state.hairStyle==='long'){ctx.lineTo(60,125);ctx.quadraticCurveTo(40,145,35,70);ctx.lineTo(-35,70);ctx.quadraticCurveTo(-40,145,-60,125);ctx.lineTo(-67,10)}else if(state.hairStyle==='bob'){ctx.lineTo(68,72);ctx.quadraticCurveTo(0,95,-68,72);ctx.closePath()}else{ctx.lineTo(45,0);ctx.lineTo(22,-25);ctx.lineTo(0,0);ctx.lineTo(-30,-27);ctx.lineTo(-58,15)}ctx.closePath();ctx.fillStyle=state.hair;ctx.fill();ctx.stroke();
+ // face
+ ctx.fillStyle='#33283d';ctx.beginPath();ctx.ellipse(-27,8,7,12,0,0,7);ctx.ellipse(27,8,7,12,0,0,7);ctx.fill();
+ ctx.strokeStyle='#a95d65';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,34,13,0.15,Math.PI-0.15);ctx.stroke();
+ ctx.restore();
+ // joints for dragging
+ if(state.tool==='pose'){[elbows[0],elbows[1],hands[0],hands[1],knees[0],knees[1],feet[0],feet[1]].forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,9,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle='#725cc1';ctx.lineWidth=4;ctx.stroke()})}
+ // strokes
+ strokes.forEach(s=>{ctx.beginPath();s.points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.lineWidth=s.size;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=s.color;ctx.globalCompositeOperation=s.erase?'destination-out':'source-over';ctx.stroke();ctx.globalCompositeOperation='source-over'});
+}
+function sync(){['armL','armR','legL','legR','head'].forEach(k=>{ $(k).value=state[k];$(k).nextElementSibling.textContent=state[k]+'°'});drawFigure()}
+['armL','armR','legL','legR','head'].forEach(k=>$(k).addEventListener('input',e=>{state[k]=+e.target.value; e.target.nextElementSibling.textContent=state[k]+'°';drawFigure()}));
+['hair','shirt','pants','skin'].forEach(k=>$(k).addEventListener('input',e=>{state[k]=e.target.value;drawFigure()}));
+$('hairStyle').addEventListener('change',e=>{state.hairStyle=e.target.value;drawFigure()});
+$('brush').addEventListener('input',e=>{state.brush=+e.target.value;e.target.nextElementSibling.textContent=state.brush});
+document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{state.tool=b.dataset.tool;document.querySelectorAll('[data-tool]').forEach(x=>x.classList.toggle('active',x===b));drawFigure()});
+document.querySelectorAll('[data-pose]').forEach(b=>b.onclick=()=>{const poses={stand:[35,-35,-8,8,0],wave:[-125,25,-5,5,0],run:[-115,45,-45,55,-8],sit:[-20,20,-75,75,0]};['armL','armR','legL','legR','head'].forEach((k,i)=>state[k]=poses[b.dataset.pose][i]);sync()});
+function pos(e){const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*700/r.width,y:(e.clientY-r.top)*760/r.height}}
+c.addEventListener('pointerdown',e=>{const p=pos(e);if(state.tool==='pose'){drag=p;return}snapshot();current={points:[p],size:state.brush,color:state.tool==='erase'?'#000':'#24202e',erase:state.tool==='erase'};strokes.push(current);c.setPointerCapture(e.pointerId);drawFigure()});
+c.addEventListener('pointermove',e=>{if(drag&&state.tool==='pose'){const p=pos(e);const dx=p.x-drag.x,dy=p.y-drag.y;if(Math.abs(dx)+Math.abs(dy)>1){if(drag.x<350){state.armL=Math.max(-150,Math.min(150,state.armL+dx*.7));}else{state.armR=Math.max(-150,Math.min(150,state.armR-dx*.7));}drag=p;sync()}return}if(current){current.points.push(pos(e));drawFigure()}});
+c.addEventListener('pointerup',()=>{drag=null;current=null});
+$('undo').onclick=()=>{if(history.length){strokes=JSON.parse(history.pop());drawFigure()}};
+$('clear').onclick=()=>{snapshot();strokes=[];drawFigure()};
+$('reset').onclick=()=>{Object.assign(state,{armL:35,armR:-35,legL:-8,legR:8,head:0,hair:'#49365f',shirt:'#9b83e8',pants:'#526b9d',skin:'#f2c6a5',hairStyle:'short'});strokes=[];sync()};
+$('white').onclick=()=>{state.bg='white';drawFigure()};$('transparent').onclick=()=>{state.bg='grid';drawFigure()};
+$('save').onclick=()=>{drawFigure();const a=document.createElement('a');a.download='my-sd-figure.png';a.href=c.toDataURL('image/png');a.click()};
+drawFigure();
+</script>
+</body></html>
